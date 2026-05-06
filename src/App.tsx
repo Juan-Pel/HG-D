@@ -51,10 +51,10 @@ export interface GameState {
   currentRound: number;
   topic: string;
   godId: string | null;
-  hitlerIds: string[];
-  gandhiIds: string[];
+  MussoliniIds: string[];
+  FreudIds: string[];
   criterion: { id: string; name: string; description: string } | null;
-  roundWinner: 'hitler' | 'gandhi' | null;
+  roundWinner: 'Mussolini' | 'Freud' | null;
   targetScore: number;
   debateEndTime: number | null; 
   gameWinnerId: string | null;
@@ -90,8 +90,8 @@ const INITIAL_STATE: GameState = {
   currentRound: 1,
   topic: '',
   godId: null,
-  hitlerIds: [],
-  gandhiIds: [],
+  MussoliniIds: [],
+  FreudIds: [],
   criterion: null,
   roundWinner: null,
   targetScore: 3,
@@ -122,7 +122,7 @@ function useGameEngine() {
   const hostConnectionRef = useRef<DataConnection | null>(null);
 
   const isHost = gameState.players.find(p => p.id === myPlayerId)?.isHost || false;
-  const role = gameState.godId === myPlayerId ? 'dios' : gameState.hitlerIds.includes(myPlayerId) ? 'hitler' : gameState.gandhiIds.includes(myPlayerId) ? 'gandhi' : 'espectador';
+  const role = gameState.godId === myPlayerId ? 'Jesús' : gameState.MussoliniIds.includes(myPlayerId) ? 'Mussolini' : gameState.FreudIds.includes(myPlayerId) ? 'Freud' : 'espectador';
 
   const showError = useCallback((msg: string) => {
     setErrorMsg(msg);
@@ -305,8 +305,8 @@ function gameReducer(state: GameState, action: any): GameState {
       ...s,
       currentRound: roundNum,
       godId,
-      hitlerIds: remaining.slice(0, half).map(p => p.id),
-      gandhiIds: remaining.slice(half).map(p => p.id),
+      MussoliniIds: remaining.slice(0, half).map(p => p.id),
+      FreudIds: remaining.slice(half).map(p => p.id),
       topic: getTopic(s),
       criterion: getRandomItem(CRITERIA),
       phase: GamePhase.ROLES,
@@ -332,13 +332,13 @@ function gameReducer(state: GameState, action: any): GameState {
       return { ...state, phase: nextPhase, debateEndTime: endTime };
     case 'ROLL_DICE':
       const result = Math.floor(Math.random() * 6) + 1;
-      const event = result > 4 ? "¡Hitler tiene el doble de tiempo!" : result < 3 ? "¡Gandhi puede interrumpir todo el rato!" : "Debate completamente normal.";
-      return { ...state, chat: [...state.chat, { id: uuidv4(), senderName: 'Dios ⚡', text: `Tiró los dados y sacó: ${result} 🎲 - ${event}`, timestamp: Date.now() }] };
+      const event = result > 4 ? "¡Mussolini tiene el doble de tiempo!" : result < 3 ? "¡Freud puede interrumpir todo el rato!" : "Debate completamente normal.";
+      return { ...state, chat: [...state.chat, { id: uuidv4(), senderName: 'Jesús ⚡', text: `Tiró los dados y sacó: ${result} 🎲 - ${event}`, timestamp: Date.now() }] };
     case 'CAST_SENTENCE':
       const winner = action.payload.winner;
       const updatedPlayers = state.players.map(p => {
-        if (winner === 'hitler' && state.hitlerIds.includes(p.id)) return { ...p, score: p.score + 1 };
-        if (winner === 'gandhi' && state.gandhiIds.includes(p.id)) return { ...p, score: p.score + 1 };
+        if (winner === 'Mussolini' && state.MussoliniIds.includes(p.id)) return { ...p, score: p.score + 1 };
+        if (winner === 'Freud' && state.FreudIds.includes(p.id)) return { ...p, score: p.score + 1 };
         return p;
       });
       const gameWinner = updatedPlayers.find(p => p.score >= state.targetScore);
@@ -435,7 +435,7 @@ export default function App() {
       <div className="min-h-screen bg-slate-950 text-white flex flex-col items-center justify-center p-4">
         {errorMsg && <div className="absolute top-4 bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2"><AlertCircle/> {errorMsg}</div>}
         <div className="max-w-md w-full bg-slate-900/50 p-8 rounded-3xl border border-slate-800 shadow-2xl text-center">
-          <h1 className="text-4xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-indigo-500">DIOS, HITLER Y GANDHI</h1>
+          <h1 className="text-4xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-indigo-500">Jesús, Mussolini Y Freud</h1>
           <p className="text-slate-400 mb-8">Entran en un bar...</p>
           
           <input type="text" placeholder="Tu Nombre" value={myNameInput} onChange={e => setMyNameInput(e.target.value)} className="w-full bg-slate-800 rounded-xl px-4 py-4 mb-4 text-center text-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
@@ -542,24 +542,24 @@ export default function App() {
             </div>
           )}
 
-          {/* FASE: ROLES (DIOS CONTROLA EL BOTÓN) */}
+          {/* FASE: ROLES (Jesús CONTROLA EL BOTÓN) */}
           {gameState.phase === GamePhase.ROLES && (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <h2 className="text-2xl text-slate-400 mb-8 uppercase tracking-widest">Tú eres...</h2>
-              <div className={`p-16 rounded-full border-8 mb-12 shadow-[0_0_80px_rgba(0,0,0,0.5)] ${role === 'dios' ? 'border-yellow-400 bg-yellow-500/20 text-yellow-400' : role === 'hitler' ? 'border-red-500 bg-red-500/20 text-red-500' : role === 'gandhi' ? 'border-emerald-500 bg-emerald-500/20 text-emerald-500' : 'border-slate-500 bg-slate-500/20 text-slate-400'}`}>
+              <div className={`p-16 rounded-full border-8 mb-12 shadow-[0_0_80px_rgba(0,0,0,0.5)] ${role === 'Jesús' ? 'border-yellow-400 bg-yellow-500/20 text-yellow-400' : role === 'Mussolini' ? 'border-red-500 bg-red-500/20 text-red-500' : role === 'Freud' ? 'border-emerald-500 bg-emerald-500/20 text-emerald-500' : 'border-slate-500 bg-slate-500/20 text-slate-400'}`}>
                 <h1 className="text-7xl font-black mb-4 uppercase">{role}</h1>
               </div>
-              {role === 'dios' ? (
+              {role === 'Jesús' ? (
                 <button onClick={() => sendAction({type: 'NEXT_PHASE'})} className="bg-yellow-500 text-slate-900 px-8 py-4 rounded-xl font-black text-xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30">
-                  Dios Manda: Revelar Tema
+                  Jesús Manda: Revelar Tema
                 </button>
               ) : (
-                <p className="text-slate-500 italic mt-8">Esperando a que Dios revele el tema...</p>
+                <p className="text-slate-500 italic mt-8">Esperando a que Jesús revele el tema...</p>
               )}
             </div>
           )}
 
-          {/* FASE: TOPIC (DIOS CONTROLA EL BOTÓN) */}
+          {/* FASE: TOPIC (Jesús CONTROLA EL BOTÓN) */}
           {gameState.phase === GamePhase.TOPIC && (
             <div className="flex flex-col items-center justify-center h-full text-center max-w-4xl mx-auto">
               <div className="text-slate-400 mb-4 uppercase font-bold">El tema es:</div>
@@ -568,22 +568,22 @@ export default function App() {
                 <div className="text-indigo-300 font-bold uppercase mb-2">Criterio Divino para ganar</div>
                 <h3 className="text-3xl font-black text-white mb-2">{gameState.criterion?.name}</h3>
               </div>
-              {role === 'dios' ? (
+              {role === 'Jesús' ? (
                 <button onClick={() => sendAction({type: 'NEXT_PHASE'})} className="bg-yellow-500 text-slate-900 px-12 py-4 rounded-xl font-black text-2xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30">
                   Lanzar Dados 🎲
                 </button>
               ) : (
-                <p className="text-slate-500 italic">Esperando a que Dios tire los dados...</p>
+                <p className="text-slate-500 italic">Esperando a que Jesús tire los dados...</p>
               )}
             </div>
           )}
 
-          {/* FASE: DICE (DIOS CONTROLA LOS BOTONES) */}
+          {/* FASE: DICE (Jesús CONTROLA LOS BOTONES) */}
           {gameState.phase === GamePhase.DICE && (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Dices className="w-32 h-32 text-indigo-400 mb-8" />
               <h2 className="text-4xl font-black mb-8">Eventos del Destino</h2>
-              {role === 'dios' ? (
+              {role === 'Jesús' ? (
                 <div className="flex gap-4">
                   <button onClick={() => sendAction({type: 'ROLL_DICE'})} className="bg-purple-600 px-8 py-4 rounded-xl font-bold text-xl hover:bg-purple-500 shadow-lg shadow-purple-500/30">
                     Tirar Dado
@@ -593,12 +593,12 @@ export default function App() {
                   </button>
                 </div>
               ) : (
-                <p className="text-slate-500 italic">Dios está jugando con el destino... Revisa el chat para ver qué sale.</p>
+                <p className="text-slate-500 italic">Jesús está jugando con el destino... Revisa el chat para ver qué sale.</p>
               )}
             </div>
           )}
 
-          {/* FASE: DEBATE (DIOS PUEDE DETENERLO) */}
+          {/* FASE: DEBATE (Jesús PUEDE DETENERLO) */}
           {gameState.phase === GamePhase.DEBATE && (
             <div className="flex flex-col h-full max-w-5xl mx-auto">
               <div className="flex justify-between items-center bg-slate-800 p-6 rounded-2xl mb-8">
@@ -607,10 +607,10 @@ export default function App() {
                 <div className="flex-1 text-right"><div className="text-xl font-bold text-indigo-400">{gameState.criterion?.name}</div></div>
               </div>
               <div className="flex-1 grid grid-cols-2 gap-8">
-                <div className={`bg-red-900/20 border-2 ${role==='hitler'?'border-red-500':'border-red-900/50'} rounded-3xl flex items-center justify-center flex-col`}><h2 className="text-4xl font-black text-red-500">HITLERS 👿</h2></div>
-                <div className={`bg-emerald-900/20 border-2 ${role==='gandhi'?'border-emerald-500':'border-emerald-900/50'} rounded-3xl flex items-center justify-center flex-col`}><h2 className="text-4xl font-black text-emerald-500">GANDHIS 🕊️</h2></div>
+                <div className={`bg-red-900/20 border-2 ${role==='Mussolini'?'border-red-500':'border-red-900/50'} rounded-3xl flex items-center justify-center flex-col`}><h2 className="text-4xl font-black text-red-500">MussoliniS 👿</h2></div>
+                <div className={`bg-emerald-900/20 border-2 ${role==='Freud'?'border-emerald-500':'border-emerald-900/50'} rounded-3xl flex items-center justify-center flex-col`}><h2 className="text-4xl font-black text-emerald-500">FreudS 🕊️</h2></div>
               </div>
-              {role === 'dios' && (
+              {role === 'Jesús' && (
                 <button onClick={() => sendAction({type: 'NEXT_PHASE'})} className="mt-8 bg-red-600 hover:bg-red-500 px-8 py-3 rounded-xl mx-auto block font-bold text-white shadow-lg shadow-red-500/30">
                   ¡Suficiente! Detener Debate Ahora
                 </button>
@@ -618,30 +618,30 @@ export default function App() {
             </div>
           )}
 
-          {/* FASE: SENTENCE (SOLO DIOS VOTA) */}
+          {/* FASE: SENTENCE (SOLO Jesús VOTA) */}
           {gameState.phase === GamePhase.SENTENCE && (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Crown className="w-24 h-24 text-yellow-500 mb-8" />
-              <h2 className="text-5xl font-black mb-4">El Veredicto de Dios</h2>
-              {role === 'dios' ? (
+              <h2 className="text-5xl font-black mb-4">El Veredicto de Jesús</h2>
+              {role === 'Jesús' ? (
                 <div className="flex gap-6 mt-8">
-                  <button onClick={() => sendAction({type: 'CAST_SENTENCE', payload: {winner: 'hitler'}})} className="bg-red-600 px-12 py-8 rounded-3xl text-3xl font-black hover:bg-red-500 shadow-lg shadow-red-500/30">Hitler Gana 👿</button>
-                  <button onClick={() => sendAction({type: 'CAST_SENTENCE', payload: {winner: 'gandhi'}})} className="bg-emerald-600 px-12 py-8 rounded-3xl text-3xl font-black hover:bg-emerald-500 shadow-lg shadow-emerald-500/30">Gandhi Gana 🕊️</button>
+                  <button onClick={() => sendAction({type: 'CAST_SENTENCE', payload: {winner: 'Mussolini'}})} className="bg-red-600 px-12 py-8 rounded-3xl text-3xl font-black hover:bg-red-500 shadow-lg shadow-red-500/30">Mussolini Gana 👿</button>
+                  <button onClick={() => sendAction({type: 'CAST_SENTENCE', payload: {winner: 'Freud'}})} className="bg-emerald-600 px-12 py-8 rounded-3xl text-3xl font-black hover:bg-emerald-500 shadow-lg shadow-emerald-500/30">Freud Gana 🕊️</button>
                 </div>
-              ) : (<div className="bg-slate-900 p-8 rounded-2xl animate-pulse text-xl mt-8">Dios está meditando su respuesta... Shh.</div>)}
+              ) : (<div className="bg-slate-900 p-8 rounded-2xl animate-pulse text-xl mt-8">Jesús está meditando su respuesta... Shh.</div>)}
             </div>
           )}
 
-          {/* FASE: RESULTS (DIOS DECIDE PASAR A LA SIGUIENTE) */}
+          {/* FASE: RESULTS (Jesús DECIDE PASAR A LA SIGUIENTE) */}
           {gameState.phase === GamePhase.RESULTS && (
              <div className="flex flex-col items-center justify-center h-full text-center">
-                <div className={`text-9xl font-black mb-12 ${gameState.roundWinner === 'hitler' ? 'text-red-500' : 'text-emerald-500'}`}>{gameState.roundWinner === 'hitler' ? 'HITLER 👿' : 'GANDHI 🕊️'}</div>
-                {role === 'dios' ? (
+                <div className={`text-9xl font-black mb-12 ${gameState.roundWinner === 'Mussolini' ? 'text-red-500' : 'text-emerald-500'}`}>{gameState.roundWinner === 'Mussolini' ? 'Mussolini 👿' : 'Freud 🕊️'}</div>
+                {role === 'Jesús' ? (
                   <button onClick={() => sendAction({type: 'NEXT_ROUND'})} className="bg-yellow-500 text-slate-900 px-12 py-4 rounded-xl font-black text-xl hover:bg-yellow-400 shadow-lg shadow-yellow-500/30">
                     Siguiente Ronda
                   </button>
                 ) : (
-                  <p className="text-slate-500 italic">Esperando que Dios pase de ronda...</p>
+                  <p className="text-slate-500 italic">Esperando que Jesús pase de ronda...</p>
                 )}
              </div>
           )}
@@ -667,9 +667,9 @@ export default function App() {
             <div className="bg-slate-800 p-4 border-b border-slate-700 font-bold flex gap-2 items-center"><MessageSquare size={18}/> Registro de Eventos</div>
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {gameState.chat.map((msg) => (
-                <div key={msg.id} className={`flex flex-col ${msg.senderName === 'Dios ⚡' ? 'items-center' : msg.senderId === myPlayerId ? 'items-end' : 'items-start'}`}>
-                  {msg.senderName !== 'Dios ⚡' && <span className="text-xs text-slate-400 mb-1 font-bold">{msg.senderName}</span>}
-                  <div className={`px-4 py-2 rounded-xl text-sm ${msg.senderName === 'Dios ⚡' ? 'bg-yellow-500/20 text-yellow-300 w-full text-center border border-yellow-500/30' : msg.senderId === myPlayerId ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-slate-700 shadow-md'}`}>
+                <div key={msg.id} className={`flex flex-col ${msg.senderName === 'Jesús ⚡' ? 'items-center' : msg.senderId === myPlayerId ? 'items-end' : 'items-start'}`}>
+                  {msg.senderName !== 'Jesús ⚡' && <span className="text-xs text-slate-400 mb-1 font-bold">{msg.senderName}</span>}
+                  <div className={`px-4 py-2 rounded-xl text-sm ${msg.senderName === 'Jesús ⚡' ? 'bg-yellow-500/20 text-yellow-300 w-full text-center border border-yellow-500/30' : msg.senderId === myPlayerId ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' : 'bg-slate-700 shadow-md'}`}>
                     {msg.text}
                   </div>
                 </div>

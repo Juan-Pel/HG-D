@@ -436,7 +436,7 @@ export default function App() {
         {errorMsg && <div className="absolute top-4 bg-red-600 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2"><AlertCircle/> {errorMsg}</div>}
         <div className="max-w-md w-full bg-slate-900/50 p-8 rounded-3xl border border-slate-800 shadow-2xl text-center">
           <h1 className="text-4xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 via-red-500 to-indigo-500">Jesús, Mussolini Y Freud</h1>
-          <p className="text-slate-400 mb-8">Entran en un bar...</p>
+          <p className="text-slate-400 mb-8">En Terapia ...</p>
           
           <input type="text" placeholder="Tu Nombre" value={myNameInput} onChange={e => setMyNameInput(e.target.value)} className="w-full bg-slate-800 rounded-xl px-4 py-4 mb-4 text-center text-xl focus:outline-none focus:ring-2 focus:ring-indigo-500"/>
           
